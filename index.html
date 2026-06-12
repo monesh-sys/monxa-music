@@ -90,6 +90,10 @@ const playlists = {
         {file:"music/Tamil Hits/Aathi Raasathi.mp3", title:"Aathi Raasathi"},
         {file:"music/Tamil Hits/God Mode.mp3", title:"God Mode"},
         {file:"music/Tamil Hits/NewSong.mp3", title:"NewSong"}
+    ],
+    "Workout": [
+        {file:"music/Workout/Verappa.mp3", title:"Verappa"},
+        {file:"music/Workout/Karuppa Kooda Va.mp3", title:"Karuppa Kooda Va"}
     ]
 };
 
@@ -100,7 +104,8 @@ const titleBox = document.getElementById("title");
 let songList = [];
 let currentIndex = -1;
 
-// render UI
+/* ================= RENDER ================= */
+
 for(let p in playlists){
 
     let html = `<div class="playlist">
@@ -120,14 +125,16 @@ for(let p in playlists){
     app.innerHTML += html;
 }
 
-// toggle playlist
+/* ================= TOGGLE ================= */
+
 function toggle(el){
-    let songs = el.nextElementSibling;
-    songs.style.display = songs.style.display === "block" ? "none" : "block";
+    let box = el.nextElementSibling;
+    box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 
-// play song
-function playSong(file,title){
+/* ================= PLAY SONG ================= */
+
+function playSong(file, title){
 
     currentIndex = songList.findIndex(s => s.file === file);
 
@@ -137,19 +144,18 @@ function playSong(file,title){
     titleBox.innerText = title;
 }
 
-// auto next
+/* ================= AUTO NEXT ================= */
+
 audio.addEventListener("ended", function(){
 
     currentIndex++;
 
     if(currentIndex < songList.length){
 
-        let next = songList[currentIndex];
-
-        audio.src = next.file;
+        audio.src = songList[currentIndex].file;
         audio.play();
 
-        titleBox.innerText = next.title;
+        titleBox.innerText = songList[currentIndex].title;
     }
 });
 
