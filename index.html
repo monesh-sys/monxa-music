@@ -6,14 +6,9 @@
 <title>Monesh Music</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
 body{
+    margin:0;
+    font-family:Arial;
     background:#121212;
     color:white;
 }
@@ -30,7 +25,7 @@ header h1{
 
 .container{
     padding:20px;
-    margin-bottom:150px;
+    margin-bottom:140px;
 }
 
 .playlist{
@@ -75,10 +70,6 @@ header h1{
     padding:15px;
 }
 
-.controls{
-    margin-bottom:10px;
-}
-
 button{
     padding:8px 15px;
     margin-right:10px;
@@ -103,42 +94,14 @@ audio{
     <h1>🎵 Monesh Music</h1>
 </header>
 
-<div class="container">
-
-{% for playlist, songs in playlists.items() %}
-
-<div class="playlist">
-
-    <div class="playlist-title"
-         onclick="togglePlaylist('playlist{{ loop.index }}')">
-        📂 {{ playlist }}
-    </div>
-
-    <div class="songs-list" id="playlist{{ loop.index }}">
-
-        {% for song in songs %}
-
-        <div class="song"
-             onclick="playSong('{{ playlist }}/{{ song.filename }}','{{ song.title }}')">
-            🎶 {{ song.title }}
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-</div>
-
-{% endfor %}
-
-</div>
+<div class="container" id="container"></div>
 
 <div class="player">
 
     <h3 id="currentSong">No Song Selected</h3>
 
-    <div class="controls">
-        <button onclick="previousSong()">⏮ Previous</button>
+    <div>
+        <button onclick="previousSong()">⏮ Prev</button>
         <button onclick="nextSong()">⏭ Next</button>
     </div>
 
@@ -151,28 +114,76 @@ audio{
 let songs = [];
 let currentIndex = 0;
 
-{% for playlist, playlistSongs in playlists.items() %}
-    {% for song in playlistSongs %}
-        songs.push({
-            file: "{{ playlist | e }}/{{ song.filename | e }}",
-            title: "{{ song.title | e }}"
+/*
+👉 MANUAL DATA (NO FLASK TEMPLATE)
+👉 You can replace this with API later
+*/
+let playlists = {
+    "Chill": [
+        {file:"Chill/song1.mp3", title:"Relax Vibes"},
+        {file:"Chill/song2.mp3", title:"Night Mood"}
+    ],
+    "Rock": [
+        {file:"Rock/rock1.mp3", title:"Power Rock"}
+    ]
+};
+
+// ----------------------
+// BUILD UI
+// ----------------------
+function loadUI(){
+
+    let container = document.getElementById("container");
+
+    let html = "";
+
+    for(let playlist in playlists){
+
+        html += `
+        <div class="playlist">
+
+            <div class="playlist-title" onclick="toggle(this)">
+                📂 ${playlist}
+            </div>
+
+            <div class="songs-list">
+        `;
+
+        playlists[playlist].forEach(song => {
+
+            songs.push(song);
+
+            html += `
+                <div class="song" onclick="playSong('${song.file}','${song.title}')">
+                    🎶 ${song.title}
+                </div>
+            `;
         });
-    {% endfor %}
-{% endfor %}
 
-function togglePlaylist(id)
-{
-    let playlist = document.getElementById(id);
+        html += `
+            </div>
+        </div>`;
+    }
 
-    playlist.style.display =
-        playlist.style.display === "block" ? "none" : "block";
+    container.innerHTML = html;
 }
 
-function playSong(file, title)
-{
+// ----------------------
+// TOGGLE PLAYLIST
+// ----------------------
+function toggle(el){
+    let list = el.nextElementSibling;
+    list.style.display = (list.style.display === "block") ? "none" : "block";
+}
+
+// ----------------------
+// PLAY SONG
+// ----------------------
+function playSong(file, title){
+
     const player = document.getElementById("audioPlayer");
 
-    currentIndex = songs.findIndex(song => song.file === file);
+    currentIndex = songs.findIndex(s => s.file === file);
 
     player.src = "/music/" + file;
     player.play();
@@ -180,28 +191,33 @@ function playSong(file, title)
     document.getElementById("currentSong").innerText = title;
 }
 
-function nextSong()
-{
-    if(currentIndex < songs.length - 1)
-    {
+// ----------------------
+// NEXT SONG
+// ----------------------
+function nextSong(){
+
+    if(currentIndex < songs.length - 1){
         currentIndex++;
         playSong(songs[currentIndex].file, songs[currentIndex].title);
     }
 }
 
-function previousSong()
-{
-    if(currentIndex > 0)
-    {
+// ----------------------
+// PREVIOUS SONG
+// ----------------------
+function previousSong(){
+
+    if(currentIndex > 0){
         currentIndex--;
         playSong(songs[currentIndex].file, songs[currentIndex].title);
     }
 }
 
-document.getElementById("audioPlayer").addEventListener("ended", function()
-{
-    nextSong();
-});
+// AUTO NEXT
+document.getElementById("audioPlayer").addEventListener("ended", nextSong);
+
+// INIT
+loadUI();
 
 </script>
 
