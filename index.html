@@ -186,6 +186,7 @@ function playSong(file, title){
     currentIndex = songs.findIndex(s => s.file === file);
 
     player.src = "/music/" + file;
+    player.load();
     player.play();
 
     document.getElementById("currentSong").innerText = title;
