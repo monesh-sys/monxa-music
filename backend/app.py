@@ -50,10 +50,10 @@ def home():
 # ----------------------------
 @app.route("/music/<playlist>/<filename>")
 def music(playlist, filename):
-
-    folder_path = os.path.join(BASE_DIR, "music", playlist)
-
-    return send_from_directory(folder_path, filename)
+    return send_from_directory(
+        os.path.join(BASE_DIR, "music", playlist),
+        filename
+    )
 
 
 # ----------------------------
