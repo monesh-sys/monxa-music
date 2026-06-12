@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monesh Music</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#121212;
+    color:white;
+}
+
+header{
+    background:#000;
+    padding:20px;
+    text-align:center;
+}
+
+header h1{
+    color:#1DB954;
+}
+
+.container{
+    padding:20px;
+    margin-bottom:150px;
+}
+
+.playlist{
+    background:#1e1e1e;
+    margin-bottom:15px;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.playlist-title{
+    padding:15px;
+    cursor:pointer;
+    font-size:20px;
+    font-weight:bold;
+    color:#1DB954;
+}
+
+.playlist-title:hover{
+    background:#2a2a2a;
+}
+
+.songs-list{
+    display:none;
+}
+
+.song{
+    padding:12px 20px;
+    border-top:1px solid #333;
+    cursor:pointer;
+}
+
+.song:hover{
+    background:#333;
+}
+
+.player{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#000;
+    padding:15px;
+}
+
+.controls{
+    margin-bottom:10px;
+}
+
+button{
+    padding:8px 15px;
+    margin-right:10px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+audio{
+    width:100%;
+}
+
+#currentSong{
+    color:#1DB954;
+    margin-bottom:10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🎵 Monesh Music</h1>
+</header>
+
+<div class="container">
+
+{% for playlist, songs in playlists.items() %}
+
+<div class="playlist">
+
+    <div class="playlist-title"
+         onclick="togglePlaylist('playlist{{ loop.index }}')">
+        📂 {{ playlist }}
+    </div>
+
+    <div class="songs-list" id="playlist{{ loop.index }}">
+
+        {% for song in songs %}
+
+        <div class="song"
+             onclick="playSong('{{ playlist }}/{{ song.filename }}','{{ song.title }}')">
+            🎶 {{ song.title }}
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<div class="player">
+
+    <h3 id="currentSong">No Song Selected</h3>
+
+    <div class="controls">
+        <button onclick="previousSong()">⏮ Previous</button>
+        <button onclick="nextSong()">⏭ Next</button>
+    </div>
+
+    <audio id="audioPlayer" controls></audio>
+
+</div>
+
+<script>
+
+let songs = [];
+let currentIndex = 0;
+
+{% for playlist, playlistSongs in playlists.items() %}
+    {% for song in playlistSongs %}
+        songs.push({
+            file: "{{ playlist }}/{{ song.filename }}",
+            title: "{{ song.title }}"
+        });
+    {% endfor %}
+{% endfor %}
+
+function togglePlaylist(id)
+{
+    let playlist = document.getElementById(id);
+
+    if(playlist.style.display === "block")
+    {
+        playlist.style.display = "none";
+    }
+    else
+    {
+        playlist.style.display = "block";
+    }
+}
+
+function playSong(file,title)
+{
+    const player = document.getElementById("audioPlayer");
+
+    currentIndex = songs.findIndex(song => song.file === file);
+
+    player.src = "/music/" + file;
+    player.play();
+
+    document.getElementById("currentSong").innerText = title;
+}
+
+function nextSong()
+{
+    if(currentIndex < songs.length - 1)
+    {
+        currentIndex++;
+
+        playSong(
+            songs[currentIndex].file,
+            songs[currentIndex].title
+        );
+    }
+}
+
+function previousSong()
+{
+    if(currentIndex > 0)
+    {
+        currentIndex--;
+
+        playSong(
+            songs[currentIndex].file,
+            songs[currentIndex].title
+        );
+    }
+}
+
+document.getElementById("audioPlayer").addEventListener("ended", function()
+{
+    nextSong();
+});
+
+</script>
+
+</body>
+</html>
