@@ -154,8 +154,8 @@ let currentIndex = 0;
 {% for playlist, playlistSongs in playlists.items() %}
     {% for song in playlistSongs %}
         songs.push({
-            file: "{{ playlist }}/{{ song.filename }}",
-            title: "{{ song.title }}"
+            file: "{{ playlist | e }}/{{ song.filename | e }}",
+            title: "{{ song.title | e }}"
         });
     {% endfor %}
 {% endfor %}
@@ -164,17 +164,11 @@ function togglePlaylist(id)
 {
     let playlist = document.getElementById(id);
 
-    if(playlist.style.display === "block")
-    {
-        playlist.style.display = "none";
-    }
-    else
-    {
-        playlist.style.display = "block";
-    }
+    playlist.style.display =
+        playlist.style.display === "block" ? "none" : "block";
 }
 
-function playSong(file,title)
+function playSong(file, title)
 {
     const player = document.getElementById("audioPlayer");
 
@@ -191,11 +185,7 @@ function nextSong()
     if(currentIndex < songs.length - 1)
     {
         currentIndex++;
-
-        playSong(
-            songs[currentIndex].file,
-            songs[currentIndex].title
-        );
+        playSong(songs[currentIndex].file, songs[currentIndex].title);
     }
 }
 
@@ -204,11 +194,7 @@ function previousSong()
     if(currentIndex > 0)
     {
         currentIndex--;
-
-        playSong(
-            songs[currentIndex].file,
-            songs[currentIndex].title
-        );
+        playSong(songs[currentIndex].file, songs[currentIndex].title);
     }
 }
 
