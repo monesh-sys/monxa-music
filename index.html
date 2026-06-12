@@ -85,13 +85,19 @@ audio{
 
 <script>
 
-{file:"music/Tamil Hits/NewSong.mp3", title:"NewSong"}
+const playlists = {
+    "Tamil Hits": [
+        {file:"music/Tamil Hits/Aathi Raasathi.mp3", title:"Aathi Raasathi"},
+        {file:"music/Tamil Hits/God Mode.mp3", title:"God Mode"},
+        {file:"music/Tamil Hits/NewSong.mp3", title:"NewSong"}
+    ]
+};
 
 const app = document.getElementById("app");
 const audio = document.getElementById("audio");
 const titleBox = document.getElementById("title");
 
-let songList = [];   // ALL songs in order
+let songList = [];
 let currentIndex = -1;
 
 // render UI
@@ -102,7 +108,7 @@ for(let p in playlists){
         <div class="songs">`;
 
     playlists[p].forEach(song=>{
-        songList.push(song); // store for auto next
+        songList.push(song);
 
         html += `
         <div class="song" onclick="playSong('${song.file}','${song.title}')">
@@ -131,11 +137,12 @@ function playSong(file,title){
     titleBox.innerText = title;
 }
 
-// 🔥 AUTO NEXT SONG
+// auto next
 audio.addEventListener("ended", function(){
 
-    if(currentIndex < songList.length - 1){
-        currentIndex++;
+    currentIndex++;
+
+    if(currentIndex < songList.length){
 
         let next = songList[currentIndex];
 
@@ -144,7 +151,6 @@ audio.addEventListener("ended", function(){
 
         titleBox.innerText = next.title;
     }
-
 });
 
 </script>
