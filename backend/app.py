@@ -48,13 +48,12 @@ def home():
 # ----------------------------
 # MUSIC FILE ROUTE
 # ----------------------------
-@app.route("/music/<playlist>/<filename>")
-def music(playlist, filename):
+@app.route("/music/<filename>")
+def music(filename):
     return send_from_directory(
-        os.path.join(BASE_DIR, "music", playlist),
+        os.path.join(BASE_DIR, "music"),
         filename
-    )
-
+    )/89+6
 
 # ----------------------------
 # RUN APP
