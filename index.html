@@ -84,7 +84,7 @@ audio{
 </div>
 
 <script>
-// 🎵 YOUR PLAYLIST DATA (EDIT HERE)
+
 const playlists = {
     "Tamil Hits": [
         {file:"music/Tamil Hits/Aathi Raasathi.mp3", title:"Aathi Raasathi"},
@@ -96,9 +96,14 @@ const playlists = {
     ]
 };
 
-// 🔥 render UI
 const app = document.getElementById("app");
+const audio = document.getElementById("audio");
+const titleBox = document.getElementById("title");
 
+let songList = [];   // ALL songs in order
+let currentIndex = -1;
+
+// render UI
 for(let p in playlists){
 
     let html = `<div class="playlist">
@@ -106,6 +111,8 @@ for(let p in playlists){
         <div class="songs">`;
 
     playlists[p].forEach(song=>{
+        songList.push(song); // store for auto next
+
         html += `
         <div class="song" onclick="playSong('${song.file}','${song.title}')">
             🎶 ${song.title}
@@ -113,22 +120,42 @@ for(let p in playlists){
     });
 
     html += `</div></div>`;
-
     app.innerHTML += html;
 }
 
-// 📂 open/close playlist
+// toggle playlist
 function toggle(el){
     let songs = el.nextElementSibling;
     songs.style.display = songs.style.display === "block" ? "none" : "block";
 }
 
-// ▶ play song
+// play song
 function playSong(file,title){
-    document.getElementById("audio").src = file;
-    document.getElementById("audio").play();
-    document.getElementById("title").innerText = title;
+
+    currentIndex = songList.findIndex(s => s.file === file);
+
+    audio.src = file;
+    audio.play();
+
+    titleBox.innerText = title;
 }
+
+// 🔥 AUTO NEXT SONG
+audio.addEventListener("ended", function(){
+
+    if(currentIndex < songList.length - 1){
+        currentIndex++;
+
+        let next = songList[currentIndex];
+
+        audio.src = next.file;
+        audio.play();
+
+        titleBox.innerText = next.title;
+    }
+
+});
+
 </script>
 
 </body>
