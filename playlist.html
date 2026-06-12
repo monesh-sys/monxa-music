@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playlist - Spotify Clone</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="logo">Spotify Clone</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <main class="playlist-page">
+      <section class="playlist-panel">
+        <h1>My Playlist</h1>
+        <div class="track-list">
+          <button class="track" data-src="music/song1.mp3">Song 1 - Chill Beat</button>
+          <button class="track" data-src="music/song2.mp3">Song 2 - Soft Groove</button>
+        </div>
+      </section>
+
+      <section class="player-panel">
+        <h2>Now playing</h2>
+        <div class="player-state">Select a track to play</div>
+        <audio id="audio-player" controls preload="none"></audio>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/player.js"></script>
+</body>
+</html>
