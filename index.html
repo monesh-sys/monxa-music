@@ -2,35 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monesh Music</title>
+<title>Monxa Music</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
 body{
+    margin:0;
+    font-family:Arial;
     background:#121212;
     color:white;
 }
 
 header{
-    background:#000;
-    padding:20px;
+    background:black;
+    padding:15px;
     text-align:center;
-}
-
-header h1{
     color:#1DB954;
+    font-size:24px;
 }
 
 .container{
     padding:20px;
-    margin-bottom:150px;
 }
 
 .playlist{
@@ -40,183 +31,104 @@ header h1{
     overflow:hidden;
 }
 
-.playlist-title{
+.playlist h2{
+    margin:0;
     padding:15px;
-    cursor:pointer;
-    font-size:20px;
-    font-weight:bold;
+    background:#181818;
     color:#1DB954;
-}
-
-.playlist-title:hover{
-    background:#2a2a2a;
-}
-
-.songs-list{
-    display:none;
+    cursor:pointer;
 }
 
 .song{
-    padding:12px 20px;
+    padding:12px;
     border-top:1px solid #333;
     cursor:pointer;
 }
 
 .song:hover{
-    background:#333;
+    background:#2a2a2a;
+}
+
+.songs{
+    display:none;
 }
 
 .player{
     position:fixed;
     bottom:0;
-    left:0;
     width:100%;
-    background:#000;
-    padding:15px;
-}
-
-.controls{
-    margin-bottom:10px;
-}
-
-button{
-    padding:8px 15px;
-    margin-right:10px;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
+    background:black;
+    padding:10px;
 }
 
 audio{
     width:100%;
 }
 
-#currentSong{
+#title{
     color:#1DB954;
-    margin-bottom:10px;
+    margin-bottom:5px;
 }
 </style>
 </head>
+
 <body>
 
-<header>
-    <h1>🎵 Monesh Music</h1>
-</header>
+<header>🎵 Monxa Music</header>
 
-<div class="container">
-
-{% for playlist, songs in playlists.items() %}
-
-<div class="playlist">
-
-    <div class="playlist-title"
-         onclick="togglePlaylist('playlist{{ loop.index }}')">
-        📂 {{ playlist }}
-    </div>
-
-    <div class="songs-list" id="playlist{{ loop.index }}">
-
-        {% for song in songs %}
-
-        <div class="song"
-             onclick="playSong('{{ playlist }}/{{ song.filename }}','{{ song.title }}')">
-            🎶 {{ song.title }}
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-</div>
-
-{% endfor %}
-
-</div>
+<div class="container" id="app"></div>
 
 <div class="player">
-
-    <h3 id="currentSong">No Song Selected</h3>
-
-    <div class="controls">
-        <button onclick="previousSong()">⏮ Previous</button>
-        <button onclick="nextSong()">⏭ Next</button>
-    </div>
-
-    <audio id="audioPlayer" controls></audio>
-
+    <div id="title">No Song Selected</div>
+    <audio id="audio" controls></audio>
 </div>
 
 <script>
+// 🎵 YOUR PLAYLIST DATA (EDIT HERE)
+const playlists = {
+    "Tamil Hits": [
+        {file:"music/Tamil Hits/Aathi Raasathi.mp3", title:"Aathi Raasathi"},
+        {file:"music/Tamil Hits/God Mode.mp3", title:"God Mode"}
+    ],
+    "Workout": [
+        {file:"music/Workout/Verappa.mp3", title:"Verappa"},
+        {file:"music/Workout/Karuppa Kooda Va.mp3", title:"Karuppa Kooda Va"}
+    ]
+};
 
-let songs = [];
-let currentIndex = 0;
+// 🔥 render UI
+const app = document.getElementById("app");
 
-{% for playlist, playlistSongs in playlists.items() %}
-    {% for song in playlistSongs %}
-        songs.push({
-            file: "{{ playlist }}/{{ song.filename }}",
-            title: "{{ song.title }}"
-        });
-    {% endfor %}
-{% endfor %}
+for(let p in playlists){
 
-function togglePlaylist(id)
-{
-    let playlist = document.getElementById(id);
+    let html = `<div class="playlist">
+        <h2 onclick="toggle(this)">📂 ${p}</h2>
+        <div class="songs">`;
 
-    if(playlist.style.display === "block")
-    {
-        playlist.style.display = "none";
-    }
-    else
-    {
-        playlist.style.display = "block";
-    }
+    playlists[p].forEach(song=>{
+        html += `
+        <div class="song" onclick="playSong('${song.file}','${song.title}')">
+            🎶 ${song.title}
+        </div>`;
+    });
+
+    html += `</div></div>`;
+
+    app.innerHTML += html;
 }
 
-function playSong(file,title)
-{
-    const player = document.getElementById("audioPlayer");
-
-    currentIndex = songs.findIndex(song => song.file === file);
-
-    player.src = "/music/" + file;
-    player.play();
-
-    document.getElementById("currentSong").innerText = title;
+// 📂 open/close playlist
+function toggle(el){
+    let songs = el.nextElementSibling;
+    songs.style.display = songs.style.display === "block" ? "none" : "block";
 }
 
-function nextSong()
-{
-    if(currentIndex < songs.length - 1)
-    {
-        currentIndex++;
-
-        playSong(
-            songs[currentIndex].file,
-            songs[currentIndex].title
-        );
-    }
+// ▶ play song
+function playSong(file,title){
+    document.getElementById("audio").src = file;
+    document.getElementById("audio").play();
+    document.getElementById("title").innerText = title;
 }
-
-function previousSong()
-{
-    if(currentIndex > 0)
-    {
-        currentIndex--;
-
-        playSong(
-            songs[currentIndex].file,
-            songs[currentIndex].title
-        );
-    }
-}
-
-document.getElementById("audioPlayer").addEventListener("ended", function()
-{
-    nextSong();
-});
-
 </script>
 
 </body>
